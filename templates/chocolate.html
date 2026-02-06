@@ -1,0 +1,13 @@
+<script>
+    const today = new Date();
+    
+    const isFeb9 =
+      today.getDate() === 9 &&
+      today.getMonth() === 1;
+    
+    if (!isFeb9) {
+      alert("This is not the right date to open this");
+      window.location.href = "/";
+    }
+
+</script>

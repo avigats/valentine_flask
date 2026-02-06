@@ -1,0 +1,13 @@
+<script>
+    const today = new Date();
+    
+    const isFeb13 =
+      today.getDate() === 13 &&
+      today.getMonth() === 1; // February is 1 (0 = January)
+    
+    if (!isFeb13) {
+      alert("This is not the right date to open this");
+      window.location.href = "/";
+    }
+
+</script>

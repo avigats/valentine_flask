@@ -1,0 +1,24 @@
+body {
+    background-color: #ffdde1;
+    text-align: center;
+    font-family: 'Comic Sans MS', cursive;
+}
+
+h1 {
+    color: #ff3366;
+}
+
+.days a {
+    display: block;
+    margin: 10px;
+    font-size: 20px;
+    text-decoration: none;
+    color: white;
+    background: #ff3366;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.days a:hover {
+    background: #ff6699;
+}
