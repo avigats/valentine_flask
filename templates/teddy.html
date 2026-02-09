@@ -2,8 +2,8 @@
     const today = new Date();
     
     const isFeb10 =
-      today.getDate() === 10 &&
-      today.getMonth() === 1; // February is 1 (0 = January)
+      today.getDate() >= 10 &&
+      today.getMonth() >= 1; // February is 1 (0 = January)
     
     if (!isFeb10) {
       alert("This is not the right date to open this");
@@ -11,3 +11,1233 @@
     }
 
 </script>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Our Teddy Day Memories 🧸</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Courier New', monospace;
+      background: #FFF5E6;
+      color: #5C4033;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Notebook paper texture background */
+    .paper-texture {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background:
+        repeating-linear-gradient(to bottom,
+          transparent,
+          transparent 31px,
+          rgba(210, 180, 140, 0.3) 31px,
+          rgba(210, 180, 140, 0.3) 32px),
+        linear-gradient(to right,
+          #FFF5E6 0%,
+          #FFF5E6 40px,
+          rgba(255, 107, 107, 0.1) 40px,
+          rgba(255, 107, 107, 0.1) 42px,
+          #FFF5E6 42px);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Main container - scrapbook style */
+    .scrapbook-page {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 60px 40px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Header - like a scrapbook title */
+    .header-section {
+      text-align: center;
+      margin-bottom: 80px;
+      position: relative;
+    }
+
+    .date-stamp {
+      display: inline-block;
+      background: #FFB6C1;
+      color: #8B4789;
+      padding: 15px 30px;
+      border-radius: 5px;
+      font-size: 1.1em;
+      font-weight: bold;
+      transform: rotate(-2deg);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      margin-bottom: 30px;
+      border: 3px dashed #8B4789;
+    }
+
+    .main-title {
+      font-size: 4.5em;
+      color: #D2691E;
+      font-family: 'Brush Script MT', cursive;
+      margin: 20px 0;
+      text-shadow: 3px 3px 0px rgba(255, 182, 193, 0.5);
+      position: relative;
+    }
+
+    .title-decoration {
+      position: absolute;
+      font-size: 0.4em;
+      animation: float-around 4s ease-in-out infinite;
+    }
+
+    .title-decoration:nth-child(1) {
+      top: -30px;
+      left: -50px;
+      animation-delay: 0s;
+    }
+
+    .title-decoration:nth-child(2) {
+      top: -30px;
+      right: -50px;
+      animation-delay: 0.5s;
+    }
+
+    .title-decoration:nth-child(3) {
+      bottom: -30px;
+      left: 100px;
+      animation-delay: 1s;
+    }
+
+    .title-decoration:nth-child(4) {
+      bottom: -30px;
+      right: 100px;
+      animation-delay: 1.5s;
+    }
+
+    @keyframes float-around {
+
+      0%,
+      100% {
+        transform: translateY(0) rotate(0deg);
+      }
+
+      50% {
+        transform: translateY(-15px) rotate(15deg);
+      }
+    }
+
+    .subtitle {
+      font-size: 1.6em;
+      color: #8B6F47;
+      font-style: italic;
+      margin-top: 20px;
+    }
+
+    /* Polaroid photo style cards */
+    .polaroid-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 40px;
+      margin: 60px 0;
+      perspective: 1000px;
+    }
+
+    .polaroid {
+      background: #fff;
+      padding: 15px;
+      padding-bottom: 80px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      position: relative;
+      transform-style: preserve-3d;
+      transition: all 0.6s cubic-bezier(0.23, 1, 0.320, 1);
+      cursor: pointer;
+    }
+
+    .polaroid::before {
+      content: '';
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 25px;
+      background: rgba(255, 215, 0, 0.3);
+      border-radius: 3px;
+      z-index: 10;
+    }
+
+    .polaroid:nth-child(odd) {
+      transform: rotate(-3deg);
+    }
+
+    .polaroid:nth-child(even) {
+      transform: rotate(2deg);
+    }
+
+    .polaroid:hover {
+      transform: rotate(0deg) scale(1.1) translateY(-20px) !important;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+      z-index: 100;
+    }
+
+    .polaroid-image {
+      width: 100%;
+      aspect-ratio: 1;
+      background: linear-gradient(135deg, #FFB6C1, #DDA0DD, #87CEEB);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 100px;
+      border: 1px solid #ddd;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .polaroid-image::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+      animation: shine 3s infinite;
+    }
+
+    @keyframes shine {
+      0% {
+        left: -100%;
+      }
+
+      50%,
+      100% {
+        left: 100%;
+      }
+    }
+
+    .polaroid-caption {
+      position: absolute;
+      bottom: 15px;
+      left: 15px;
+      right: 15px;
+      text-align: center;
+      font-family: 'Brush Script MT', cursive;
+      font-size: 1.4em;
+      color: #5C4033;
+    }
+
+    /* Sticky notes section */
+    .sticky-notes-wall {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+      margin: 80px 0;
+    }
+
+    .sticky-note {
+      background: linear-gradient(135deg, #FEFF9C 0%, #FFF740 100%);
+      padding: 30px;
+      min-height: 200px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      position: relative;
+      font-family: 'Comic Sans MS', sans-serif;
+      font-size: 1.2em;
+      line-height: 1.8;
+      cursor: pointer;
+      transition: all 0.3s;
+      transform-origin: center;
+    }
+
+    .sticky-note::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 30px;
+      background: linear-gradient(to bottom, rgba(0, 0, 0, 0.05), transparent);
+    }
+
+    .sticky-note:nth-child(1) {
+      transform: rotate(-2deg);
+      background: linear-gradient(135deg, #FFB6C1 0%, #FFE4E1 100%);
+    }
+
+    .sticky-note:nth-child(2) {
+      transform: rotate(1deg);
+      background: linear-gradient(135deg, #B0E0E6 0%, #E0F6FF 100%);
+    }
+
+    .sticky-note:nth-child(3) {
+      transform: rotate(-1deg);
+      background: linear-gradient(135deg, #DDA0DD 0%, #F8E6FF 100%);
+    }
+
+    .sticky-note:nth-child(4) {
+      transform: rotate(2deg);
+      background: linear-gradient(135deg, #98FB98 0%, #E6FFE6 100%);
+    }
+
+    .sticky-note:nth-child(5) {
+      transform: rotate(-1deg);
+      background: linear-gradient(135deg, #FFD700 0%, #FFF8DC 100%);
+    }
+
+    .sticky-note:nth-child(6) {
+      transform: rotate(1deg);
+      background: linear-gradient(135deg, #FFA07A 0%, #FFE4D5 100%);
+    }
+
+    .sticky-note:hover {
+      transform: rotate(0deg) scale(1.15) !important;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+      z-index: 10;
+    }
+
+    .sticky-note-title {
+      font-weight: bold;
+      font-size: 1.3em;
+      margin-bottom: 15px;
+      color: #5C4033;
+      text-decoration: underline;
+    }
+
+    /* Interactive teddy builder */
+    .teddy-builder {
+      background: rgba(255, 255, 255, 0.8);
+      padding: 60px;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      margin: 80px 0;
+      border: 5px solid #D2691E;
+      position: relative;
+    }
+
+    .teddy-builder::before,
+    .teddy-builder::after {
+      content: '📌';
+      position: absolute;
+      top: -20px;
+      font-size: 40px;
+      transform: rotate(45deg);
+    }
+
+    .teddy-builder::before {
+      left: 40px;
+    }
+
+    .teddy-builder::after {
+      right: 40px;
+    }
+
+    .builder-title {
+      text-align: center;
+      font-size: 3em;
+      color: #D2691E;
+      margin-bottom: 40px;
+      font-family: 'Brush Script MT', cursive;
+    }
+
+    .teddy-display {
+      text-align: center;
+      margin: 40px 0;
+      min-height: 300px;
+      background: linear-gradient(135deg, #FFF5E6, #FFE4E1);
+      border-radius: 20px;
+      padding: 40px;
+      position: relative;
+      border: 3px dashed #D2691E;
+    }
+
+    .teddy-character {
+      font-size: 200px;
+      display: inline-block;
+      animation: teddy-bounce 2s ease-in-out infinite;
+      filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.2));
+    }
+
+    @keyframes teddy-bounce {
+
+      0%,
+      100% {
+        transform: translateY(0) rotate(-5deg);
+      }
+
+      50% {
+        transform: translateY(-20px) rotate(5deg);
+      }
+    }
+
+    .accessory-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 80px;
+      pointer-events: none;
+    }
+
+    .customization-panel {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 40px;
+    }
+
+    .custom-option {
+      background: white;
+      border: 3px solid #D2691E;
+      border-radius: 15px;
+      padding: 20px 30px;
+      font-size: 1.2em;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .custom-option:hover {
+      transform: scale(1.1) rotate(-2deg);
+      background: #FFB6C1;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .custom-option.active {
+      background: #FFB6C1;
+      transform: scale(1.05);
+    }
+
+    /* Washi tape decorations */
+    .washi-tape {
+      height: 30px;
+      background: repeating-linear-gradient(45deg,
+          #FFB6C1,
+          #FFB6C1 10px,
+          #DDA0DD 10px,
+          #DDA0DD 20px);
+      opacity: 0.6;
+      position: relative;
+      margin: 60px 0;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .washi-tape::before,
+    .washi-tape::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      width: 30px;
+      height: 100%;
+      background: inherit;
+    }
+
+    .washi-tape::before {
+      left: -15px;
+      transform: rotate(-5deg);
+    }
+
+    .washi-tape::after {
+      right: -15px;
+      transform: rotate(5deg);
+    }
+
+    /* Memory timeline */
+    .memory-timeline {
+      position: relative;
+      padding: 40px 0;
+      margin: 60px 0;
+    }
+
+    .timeline-connector {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      bottom: 0;
+      width: 6px;
+      background: repeating-linear-gradient(to bottom,
+          #FFB6C1 0px,
+          #FFB6C1 20px,
+          #DDA0DD 20px,
+          #DDA0DD 40px);
+      transform: translateX(-50%);
+    }
+
+    .memory-item {
+      display: flex;
+      align-items: center;
+      margin: 80px 0;
+      position: relative;
+    }
+
+    .memory-item:nth-child(odd) {
+      flex-direction: row;
+    }
+
+    .memory-item:nth-child(even) {
+      flex-direction: row-reverse;
+    }
+
+    .memory-card {
+      width: 45%;
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+      border: 4px solid;
+      position: relative;
+      transition: all 0.4s;
+    }
+
+    .memory-card:nth-child(1) {
+      border-color: #FFB6C1;
+    }
+
+    .memory-card:nth-child(2) {
+      border-color: #DDA0DD;
+    }
+
+    .memory-card:nth-child(3) {
+      border-color: #87CEEB;
+    }
+
+    .memory-card:hover {
+      transform: scale(1.08);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .memory-icon {
+      font-size: 60px;
+      margin-bottom: 20px;
+      display: inline-block;
+      animation: swing 3s ease-in-out infinite;
+    }
+
+    @keyframes swing {
+
+      0%,
+      100% {
+        transform: rotate(0deg);
+      }
+
+      25% {
+        transform: rotate(-15deg);
+      }
+
+      75% {
+        transform: rotate(15deg);
+      }
+    }
+
+    .memory-dot {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 40px;
+      height: 40px;
+      background: white;
+      border: 5px solid #D2691E;
+      border-radius: 50%;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      z-index: 10;
+    }
+
+    .memory-title {
+      font-size: 1.8em;
+      color: #D2691E;
+      margin-bottom: 15px;
+      font-weight: bold;
+    }
+
+    .memory-text {
+      font-size: 1.2em;
+      line-height: 1.8;
+      color: #5C4033;
+    }
+
+    /* Special message box */
+    .message-box {
+      background: white;
+      border: 5px double #D2691E;
+      padding: 60px;
+      margin: 80px auto;
+      max-width: 800px;
+      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+      position: relative;
+      border-radius: 10px;
+    }
+
+    .message-box::before {
+      content: '🧸';
+      position: absolute;
+      top: -40px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 80px;
+      background: white;
+      padding: 0 20px;
+    }
+
+    .message-text {
+      font-size: 1.4em;
+      line-height: 2.2;
+      text-align: center;
+      color: #5C4033;
+      font-family: 'Georgia', serif;
+      font-style: italic;
+    }
+
+    .message-signature {
+      text-align: right;
+      font-size: 1.6em;
+      margin-top: 30px;
+      color: #D2691E;
+      font-family: 'Brush Script MT', cursive;
+    }
+
+    /* Button section */
+    .action-section {
+      text-align: center;
+      margin: 80px 0;
+      padding: 60px;
+      background: linear-gradient(135deg, rgba(255, 182, 193, 0.3), rgba(221, 160, 221, 0.3));
+      border-radius: 30px;
+      border: 5px solid #FFB6C1;
+      position: relative;
+    }
+
+    .hug-button {
+      background: linear-gradient(135deg, #FFB6C1, #FF69B4);
+      color: white;
+      border: none;
+      padding: 30px 70px;
+      font-size: 2em;
+      border-radius: 50px;
+      cursor: pointer;
+      font-weight: bold;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s;
+      font-family: 'Comic Sans MS', sans-serif;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hug-button::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    .hug-button:hover::before {
+      width: 400px;
+      height: 400px;
+    }
+
+    .hug-button:hover {
+      transform: scale(1.15);
+      box-shadow: 0 15px 45px rgba(255, 105, 180, 0.5);
+    }
+
+    .hug-counter {
+      margin-top: 30px;
+      font-size: 2em;
+      color: #D2691E;
+      font-weight: bold;
+    }
+
+    /* Floating teddy emojis */
+    .floating-teddies {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .floating-teddy {
+      position: absolute;
+      font-size: 40px;
+      animation: float-teddy 15s infinite;
+      opacity: 0.6;
+    }
+
+    @keyframes float-teddy {
+      0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+      }
+
+      10% {
+        opacity: 0.6;
+      }
+
+      90% {
+        opacity: 0.6;
+      }
+
+      100% {
+        transform: translateY(-150px) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    /* Footer scrapbook style */
+    footer {
+      text-align: center;
+      padding: 60px 20px;
+      background: #8B6F47;
+      color: #FFF5E6;
+      margin-top: 80px;
+      position: relative;
+      border-top: 10px solid #D2691E;
+    }
+
+    footer::before {
+      content: '';
+      position: absolute;
+      top: -10px;
+      left: 0;
+      right: 0;
+      height: 10px;
+      background: repeating-linear-gradient(90deg,
+          #FFB6C1 0px,
+          #FFB6C1 20px,
+          #DDA0DD 20px,
+          #DDA0DD 40px,
+          #87CEEB 40px,
+          #87CEEB 60px);
+    }
+
+    .footer-teddies {
+      font-size: 50px;
+      margin-bottom: 20px;
+    }
+
+    .footer-teddies span {
+      display: inline-block;
+      animation: teddy-wave 2s ease-in-out infinite;
+    }
+
+    .footer-teddies span:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .footer-teddies span:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes teddy-wave {
+
+      0%,
+      100% {
+        transform: rotate(0deg);
+      }
+
+      25% {
+        transform: rotate(-20deg);
+      }
+
+      75% {
+        transform: rotate(20deg);
+      }
+    }
+
+    footer p {
+      font-size: 1.4em;
+      margin: 15px 0;
+      font-family: 'Brush Script MT', cursive;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .main-title {
+        font-size: 3em;
+      }
+
+      .polaroid-section {
+        grid-template-columns: 1fr;
+      }
+
+      .sticky-notes-wall {
+        grid-template-columns: 1fr;
+      }
+
+      .memory-item {
+        flex-direction: column !important;
+      }
+
+      .memory-card {
+        width: 100%;
+      }
+
+      .timeline-connector {
+        left: 20px;
+      }
+
+      .teddy-character {
+        font-size: 120px;
+      }
+
+      .teddy-builder {
+        padding: 30px;
+      }
+
+      .hug-button {
+        padding: 20px 40px;
+        font-size: 1.5em;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Paper texture background -->
+  <div class="paper-texture"></div>
+
+  <!-- Floating teddies -->
+  <div class="floating-teddies" id="floatingTeddies"></div>
+
+  <!-- Main scrapbook page -->
+  <div class="scrapbook-page">
+    <!-- Header -->
+    <div class="header-section">
+      <div class="date-stamp">💌 Teddy Day Special 💌</div>
+      <h1 class="main-title">
+        <span class="title-decoration">🧸</span>
+        <span class="title-decoration">💕</span>
+        Our Teddy Story
+        <span class="title-decoration">🎀</span>
+        <span class="title-decoration">🧸</span>
+      </h1>
+      <p class="subtitle">"Every teddy tells a story... This is ours"</p>
+    </div>
+
+    <!-- Polaroid memories -->
+    <!-- <h2 style="font-size: 2.5em; text-align: center; color: #D2691E; margin: 60px 0 40px; font-family: 'Brush Script MT', cursive;">
+            📸 Our Precious Moments
+        </h2>
+        <div class="polaroid-section">
+            <div class="polaroid">
+                <div class="polaroid-image">🧸</div>
+                <div class="polaroid-caption">First teddy together</div>
+            </div>
+
+            <div class="polaroid">
+                <div class="polaroid-image">💑</div>
+                <div class="polaroid-caption">Us being cute</div>
+            </div>
+
+            <div class="polaroid">
+                <div class="polaroid-image">🎂</div>
+                <div class="polaroid-caption">Birthday surprises</div>
+            </div>
+
+            <div class="polaroid">
+                <div class="polaroid-image">🌟</div>
+                <div class="polaroid-caption">Special moments</div>
+            </div>
+
+            <div class="polaroid">
+                <div class="polaroid-image">💝</div>
+                <div class="polaroid-caption">Gifts of love</div>
+            </div>
+
+            <div class="polaroid">
+                <div class="polaroid-image">🌈</div>
+                <div class="polaroid-caption">Forever memories</div>
+            </div>
+        </div> -->
+
+    <!-- Washi tape divider -->
+    <div class="washi-tape"></div>
+
+    <!-- Sticky notes wall -->
+    <h2
+      style="font-size: 2.5em; text-align: center; color: #D2691E; margin: 60px 0 40px; font-family: 'Brush Script MT', cursive;">
+      📝 Things I Love About You
+    </h2>
+    <div class="sticky-notes-wall">
+      <div class="sticky-note">
+        <div class="sticky-note-title">🥰 Your Hugs</div>
+        Your hugs are warmer and cozier than any teddy bear! When you hold me, everything feels perfect and safe.
+      </div>
+
+      <div class="sticky-note">
+        <div class="sticky-note-title">😊 Your Smile</div>
+        Your smile brightens my day like sunshine! It's the best thing I see every morning and the last thing I think
+        about at night.
+      </div>
+
+      <div class="sticky-note">
+        <div class="sticky-note-title">💖 Your Kindness</div>
+        You have the softest, kindest heart - just like a teddy bear! You make everyone around you feel loved and
+        special.
+      </div>
+
+      <div class="sticky-note">
+        <div class="sticky-note-title">🎀 Your Cuteness</div>
+        You're cuter than any teddy! The way you laugh, the way you talk, everything about you is absolutely adorable!
+      </div>
+
+      <div class="sticky-note">
+        <div class="sticky-note-title">🌟 Your Support</div>
+        You're always there for me, just like a teddy companion. You listen, you care, you understand - you're my
+        perfect partner!
+      </div>
+
+      <div class="sticky-note">
+        <div class="sticky-note-title">💕 Everything!</div>
+        Honestly, I love EVERYTHING about you! You're my comfort, my joy, my teddy bear, and my whole world!
+      </div>
+    </div>
+
+    <!-- Washi tape divider -->
+    <!-- <div class="washi-tape"></div> -->
+
+    <!-- Interactive teddy builder -->
+    <!-- <div class="teddy-builder">
+            <h2 class="builder-title">🎨 Build Your Dream Teddy!</h2>
+            <p style="text-align: center; font-size: 1.3em; color: #5C4033; margin-bottom: 30px;">
+                Click the options below to customize your special teddy!
+            </p>
+
+            <div class="teddy-display">
+                <div class="teddy-character" id="teddyCharacter">🧸</div>
+                <div class="accessory-container" id="accessoryContainer"></div>
+            </div>
+
+            <div class="customization-panel">
+                <button class="custom-option" onclick="changeTeddy('🧸')">Classic Teddy</button>
+                <button class="custom-option" onclick="changeTeddy('🐻')">Brown Bear</button>
+                <button class="custom-option" onclick="changeTeddy('🐼')">Panda Bear</button>
+                <button class="custom-option" onclick="changeTeddy('🐨')">Koala Bear</button>
+                <button class="custom-option" onclick="addAccessory('🎀')">Add Bow</button>
+                <button class="custom-option" onclick="addAccessory('👑')">Add Crown</button>
+                <button class="custom-option" onclick="addAccessory('💝')">Add Heart</button>
+                <button class="custom-option" onclick="addAccessory('🌹')">Add Rose</button>
+                <button class="custom-option" onclick="addAccessory('')">Remove Accessory</button>
+            </div>
+        </div> -->
+
+    <!-- Washi tape divider -->
+    <div class="washi-tape"></div>
+
+    <!-- Memory timeline -->
+    <h2
+      style="font-size: 2.5em; text-align: center; color: #D2691E; margin: 60px 0 40px; font-family: 'Brush Script MT', cursive;">
+      🎯 Our Teddy Journey
+    </h2>
+    <div class="memory-timeline">
+      <div class="timeline-connector"></div>
+
+      <div class="memory-item">
+        <div class="memory-card">
+          <div class="memory-icon">🎁</div>
+          <h3 class="memory-title">
+            <h3 class="memory-title">Teddy Bear Hugs</h3>
+          </h3>
+          <p class="memory-text">
+            All those times you hugged me tight like a teddy bear - those are my favorite moments! Your embrace feels
+            like home.
+          </p>
+        </div>
+        <div class="memory-dot"></div>
+      </div>
+
+      <div class="memory-item">
+        <div class="memory-card">
+          <div class="memory-icon">💋</div>
+          <h3 class="memory-title">Teddy Bear Kiss</h3>
+          <p class="memory-text">
+            The time you gave me a kiss, It was like a teddy bear kiss - soft, sweet, and
+            filled with love. I felt so cherished in that moment!
+          </p>
+        </div>
+        <div class="memory-dot"></div>
+      </div>
+
+      <div class="memory-item">
+        <div class="memory-card">
+          <div class="memory-icon">💕</div>
+          <h3 class="memory-title">You're My Teddy</h3>
+          <p class="memory-text">
+            You became my real-life teddy bear - my comfort, my joy, my everything. I cuddle up to you in my heart every
+            moment!
+          </p>
+        </div>
+        <div class="memory-dot"></div>
+      </div>
+    </div>
+
+    <!-- Washi tape divider -->
+    <div class="washi-tape"></div>
+
+    <!-- Special message -->
+    <div class="message-box">
+      <p class="message-text">
+        You know what's better than having a teddy bear?<br><br>
+        Having YOU! 🧸💕<br><br>
+        You're softer, cuter, more cuddly, and infinitely more special than any teddy in the world. You're my comfort on
+        bad days, my joy on good days, and my constant companion every single day.<br><br>
+        This Teddy Day, I just want you to know that you're not just my teddy bear - you're my whole world! 🌍❤️
+      </p>
+      <div class="message-signature">
+        Forever yours,<br>
+        Your Biggest Hugger 🤗
+      </div>
+    </div>
+
+    <!-- Interactive hug section -->
+    <div class="action-section">
+      <h2 style="font-size: 3em; color: #D2691E; margin-bottom: 30px; font-family: 'Brush Script MT', cursive;">
+        🤗 Send Me Virtual Hugs!
+      </h2>
+      <p style="font-size: 1.4em; color: #5C4033; margin-bottom: 40px;">
+        Click the button to send me teddy bear hugs! 💕
+      </p>
+      <button class="hug-button" onclick="sendHug()">
+        🧸 SEND A HUG 🤗
+      </button>
+      <div class="hug-counter" id="hugCounter">Hugs Sent: 0</div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-teddies">
+      <span>🧸</span>
+      <span>💕</span>
+      <span>🧸</span>
+    </div>
+    <p>Happy Teddy Day to My Favorite Person!</p>
+    <p style="font-size: 1.2em; margin-top: 20px;">You're My Forever Teddy Bear 🧸❤️</p>
+  </footer>
+
+  <script>
+    // Create floating teddies
+    function createFloatingTeddies() {
+      const container = document.getElementById('floatingTeddies');
+      const teddies = ['🧸', '🐻', '🐼', '🐨', '💕', '🎀'];
+
+      setInterval(() => {
+        const teddy = document.createElement('div');
+        teddy.className = 'floating-teddy';
+        teddy.textContent = teddies[Math.floor(Math.random() * teddies.length)];
+        teddy.style.left = Math.random() * 100 + '%';
+        teddy.style.animationDuration = (Math.random() * 8 + 10) + 's';
+        teddy.style.animationDelay = Math.random() * 3 + 's';
+        container.appendChild(teddy);
+
+        setTimeout(() => teddy.remove(), 18000);
+      }, 800);
+    }
+
+    createFloatingTeddies();
+
+    // Teddy customizer
+    let currentTeddy = '🧸';
+    let currentAccessory = '';
+
+    function changeTeddy(emoji) {
+      currentTeddy = emoji;
+      document.getElementById('teddyCharacter').textContent = emoji;
+
+      // Visual feedback
+      event.target.classList.add('active');
+      setTimeout(() => event.target.classList.remove('active'), 500);
+
+      // Create puff effect
+      createPuffEffect();
+    }
+
+    function addAccessory(emoji) {
+      currentAccessory = emoji;
+      document.getElementById('accessoryContainer').textContent = emoji;
+
+      // Visual feedback
+      event.target.classList.add('active');
+      setTimeout(() => event.target.classList.remove('active'), 500);
+    }
+
+    function createPuffEffect() {
+      const display = document.querySelector('.teddy-display');
+      const hearts = ['💕', '💖', '💗', '💓', '💝'];
+
+      for (let i = 0; i < 10; i++) {
+        const heart = document.createElement('div');
+        heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+        heart.style.position = 'absolute';
+        heart.style.left = '50%';
+        heart.style.top = '50%';
+        heart.style.fontSize = '30px';
+        heart.style.pointerEvents = 'none';
+        heart.style.zIndex = '1000';
+
+        const angle = (Math.PI * 2 * i) / 10;
+        const distance = 100;
+        const tx = Math.cos(angle) * distance;
+        const ty = Math.sin(angle) * distance;
+
+        heart.style.animation = `puff-${i} 1s ease-out forwards`;
+
+        const style = document.createElement('style');
+        style.textContent = `
+                    @keyframes puff-${i} {
+                        0% {
+                            transform: translate(-50%, -50%) scale(0);
+                            opacity: 1;
+                        }
+                        100% {
+                            transform: translate(calc(-50% + ${tx}px), calc(-50% + ${ty}px)) scale(1);
+                            opacity: 0;
+                        }
+                    }
+                `;
+        document.head.appendChild(style);
+
+        display.appendChild(heart);
+
+        setTimeout(() => {
+          heart.remove();
+          style.remove();
+        }, 1000);
+      }
+    }
+
+    // Hug counter
+    let hugCount = 0;
+    function sendHug() {
+      hugCount++;
+      document.getElementById('hugCounter').textContent = `Hugs Sent: ${hugCount} 🤗`;
+
+      // Create hug animation
+      createHugAnimation();
+
+      // Change button text temporarily
+      const button = event.target;
+      const originalText = button.innerHTML;
+      button.innerHTML = '💕 HUG RECEIVED! 💕';
+      button.style.background = 'linear-gradient(135deg, #FF69B4, #FFB6C1)';
+
+      setTimeout(() => {
+        button.innerHTML = originalText;
+        button.style.background = 'linear-gradient(135deg, #FFB6C1, #FF69B4)';
+      }, 1000);
+    }
+
+    function createHugAnimation() {
+      const teddies = ['🧸', '🤗', '💕', '🐻', '💖'];
+
+      for (let i = 0; i < 20; i++) {
+        setTimeout(() => {
+          const teddy = document.createElement('div');
+          teddy.textContent = teddies[Math.floor(Math.random() * teddies.length)];
+          teddy.style.position = 'fixed';
+          teddy.style.left = Math.random() * 100 + '%';
+          teddy.style.top = '100%';
+          teddy.style.fontSize = '50px';
+          teddy.style.pointerEvents = 'none';
+          teddy.style.zIndex = '10000';
+          teddy.style.animation = 'float-up-hug 3s ease-out forwards';
+
+          document.body.appendChild(teddy);
+          setTimeout(() => teddy.remove(), 3000);
+        }, i * 100);
+      }
+    }
+
+    const hugStyle = document.createElement('style');
+    hugStyle.textContent = `
+            @keyframes float-up-hug {
+                0% {
+                    transform: translateY(0) rotate(0deg);
+                    opacity: 1;
+                }
+                100% {
+                    transform: translateY(-100vh) rotate(360deg);
+                    opacity: 0;
+                }
+            }
+        `;
+    document.head.appendChild(hugStyle);
+
+    // Add rotation to polaroids on hover
+    document.querySelectorAll('.polaroid').forEach(polaroid => {
+      polaroid.addEventListener('click', function () {
+        this.style.transform = 'rotate(0deg) scale(1.2)';
+        setTimeout(() => {
+          this.style.transform = '';
+        }, 500);
+      });
+    });
+
+    // Sticky note interaction
+    document.querySelectorAll('.sticky-note').forEach(note => {
+      note.addEventListener('click', function () {
+        // Create hearts around the note
+        const rect = this.getBoundingClientRect();
+        for (let i = 0; i < 5; i++) {
+          const heart = document.createElement('div');
+          heart.textContent = '💕';
+          heart.style.position = 'fixed';
+          heart.style.left = rect.left + rect.width / 2 + 'px';
+          heart.style.top = rect.top + rect.height / 2 + 'px';
+          heart.style.fontSize = '30px';
+          heart.style.pointerEvents = 'none';
+          heart.style.zIndex = '1000';
+          heart.style.animation = `sticky-heart-${i} 1.5s ease-out forwards`;
+
+          const angle = (Math.PI * 2 * i) / 5;
+          const distance = 80;
+          const tx = Math.cos(angle) * distance;
+          const ty = Math.sin(angle) * distance;
+
+          const style = document.createElement('style');
+          style.textContent = `
+                        @keyframes sticky-heart-${i} {
+                            0% {
+                                transform: translate(-50%, -50%) scale(0);
+                                opacity: 1;
+                            }
+                            100% {
+                                transform: translate(calc(-50% + ${tx}px), calc(-50% + ${ty}px)) scale(1.5);
+                                opacity: 0;
+                            }
+                        }
+                    `;
+          document.head.appendChild(style);
+
+          document.body.appendChild(heart);
+
+          setTimeout(() => {
+            heart.remove();
+            style.remove();
+          }, 1500);
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>
