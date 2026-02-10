@@ -1,4 +1,4 @@
-<script>
+<!-- <script>
     const today = new Date();
     
     const isFeb11 =
@@ -10,4 +10,842 @@
       window.location.href = "/";
     }
 
-</script>
+</script> -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Promise Day - A Promise to You</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #ff4458;
+      --primary-dark: #e63946;
+      --secondary: #ff9bb5;
+      --accent: #ffd4d4;
+      --dark: #2d3436;
+      --light: #f8f9fa;
+      --gradient-warm: linear-gradient(135deg, #ff4458 0%, #ff9bb5 100%);
+      --gradient-soft: linear-gradient(135deg, #fff0f3 0%, #ffe5ea 100%);
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      color: var(--dark);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: var(--gradient-warm);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--dark);
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: color 0.3s ease;
+      position: relative;
+    }
+
+    .nav-links a:hover {
+      color: var(--primary);
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--primary);
+      transition: width 0.3s ease;
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    /* Hero Section */
+    .hero {
+      margin-top: 70px;
+      min-height: calc(100vh - 70px);
+      background: var(--gradient-soft);
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(255, 68, 88, 0.1) 0%, transparent 70%);
+      border-radius: 50%;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .hero-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+      width: 100%;
+    }
+
+    .hero-text h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 4rem;
+      line-height: 1.2;
+      margin-bottom: 1.5rem;
+      color: var(--dark);
+    }
+
+    .hero-text h1 span {
+      background: var(--gradient-warm);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-text p {
+      font-size: 1.1rem;
+      color: #666;
+      margin-bottom: 2rem;
+      line-height: 1.8;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+    }
+
+    .btn-primary {
+      background: var(--gradient-warm);
+      color: white;
+      box-shadow: 0 10px 30px rgba(255, 68, 88, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 40px rgba(255, 68, 88, 0.4);
+    }
+
+    .btn-secondary {
+      background: white;
+      color: var(--primary);
+      border: 2px solid var(--primary);
+    }
+
+    .btn-secondary:hover {
+      background: var(--accent);
+      transform: translateY(-3px);
+    }
+
+    .hero-image {
+      position: relative;
+      height: 500px;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+      background: linear-gradient(135deg, #ff4458 0%, #ff9bb5 100%);
+    }
+
+    .hero-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    /* About Section */
+    .about {
+      padding: 6rem 2rem;
+      background: white;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .about h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      text-align: center;
+      margin-bottom: 1rem;
+      color: var(--dark);
+    }
+
+    .about-subtitle {
+      text-align: center;
+      color: var(--primary);
+      font-size: 1.1rem;
+      margin-bottom: 3rem;
+      font-weight: 500;
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .about-card {
+      padding: 2.5rem;
+      background: var(--gradient-soft);
+      border-radius: 15px;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+
+    .about-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 20px 40px rgba(255, 68, 88, 0.15);
+    }
+
+    .about-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .about-card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: var(--dark);
+    }
+
+    .about-card p {
+      color: #666;
+      line-height: 1.8;
+    }
+
+    /* Promise Section */
+    .promise {
+      padding: 6rem 2rem;
+      background: var(--gradient-warm);
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .promise::before {
+      content: '';
+      position: absolute;
+      top: -100px;
+      left: -100px;
+      width: 300px;
+      height: 300px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      animation: float 10s ease-in-out infinite;
+    }
+
+    .promise::after {
+      content: '';
+      position: absolute;
+      bottom: -50px;
+      right: -50px;
+      width: 250px;
+      height: 250px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      animation: float 8s ease-in-out infinite reverse;
+    }
+
+    .promise-container {
+      max-width: 900px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+      text-align: center;
+    }
+
+    .promise h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .promise-text {
+      font-size: 1.1rem;
+      line-height: 2;
+      margin-bottom: 2rem;
+      font-weight: 300;
+    }
+
+    .promise-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+
+    .promise-item {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 1.5rem;
+      border-radius: 10px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .promise-item:hover {
+      background: rgba(255, 255, 255, 0.25);
+      transform: translateY(-5px);
+    }
+
+    .promise-item h3 {
+      font-size: 1.3rem;
+      margin-bottom: 0.5rem;
+    }
+
+    /* Quote Section */
+    .quote {
+      padding: 6rem 2rem;
+      background: linear-gradient(135deg, #2d3436 0%, #636e72 100%);
+      color: white;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .quote::before {
+      content: '"';
+      position: absolute;
+      top: 20px;
+      left: 40px;
+      font-size: 10rem;
+      opacity: 0.1;
+      font-family: 'Playfair Display', serif;
+    }
+
+    .quote-container {
+      max-width: 700px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+
+    .quote p {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      line-height: 1.8;
+      margin-bottom: 2rem;
+      font-weight: 600;
+    }
+
+    .quote-author {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--secondary);
+    }
+
+    /* Letters Section */
+    .letters {
+      padding: 6rem 2rem;
+      background: white;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .letters h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .letter-box {
+      background: var(--light);
+      padding: 2.5rem;
+      border-radius: 15px;
+      border-left: 5px solid var(--primary);
+      margin-bottom: 2rem;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .letter-box:hover {
+      box-shadow: 0 15px 40px rgba(255, 68, 88, 0.2);
+      transform: translateX(10px);
+    }
+
+    .letter-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .letter-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      color: var(--primary);
+    }
+
+    .letter-icon {
+      font-size: 1.5rem;
+      transition: transform 0.3s ease;
+    }
+
+    .letter-box:hover .letter-icon {
+      transform: translateY(-3px);
+    }
+
+    .letter-content {
+      color: #666;
+      line-height: 1.8;
+      display: none;
+      animation: slideDown 0.3s ease;
+      margin-top: 1rem;
+    }
+
+    .letter-content.active {
+      display: block;
+    }
+
+    /* CTA Section */
+    .cta {
+      padding: 6rem 2rem;
+      background: var(--gradient-soft);
+      text-align: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .cta h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .cta p {
+      font-size: 1.1rem;
+      color: #666;
+      margin-bottom: 2.5rem;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Footer */
+    footer {
+      background: var(--dark);
+      color: white;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    footer p {
+      margin-bottom: 0.5rem;
+    }
+
+    .footer-hearts {
+      font-size: 1.5rem;
+      letter-spacing: 0.5rem;
+      margin: 1rem 0;
+    }
+
+    /* Animations */
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0px);
+      }
+
+      50% {
+        transform: translateY(-20px);
+      }
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fall {
+      to {
+        transform: translateY(100vh) rotateZ(360deg);
+        opacity: 0;
+      }
+    }
+
+    /* Floating Hearts Background */
+    .floating-hearts {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .heart {
+      position: absolute;
+      font-size: 2rem;
+      opacity: 0.3;
+      animation: fall 10s linear infinite;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      nav {
+        padding: 1rem;
+      }
+
+      .nav-links {
+        gap: 1rem;
+        font-size: 0.9rem;
+      }
+
+      .hero-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+
+      .hero-text h1 {
+        font-size: 2.5rem;
+      }
+
+      .hero-image {
+        height: 300px;
+      }
+
+      .about-grid,
+      .promise-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .quote p {
+        font-size: 1.5rem;
+      }
+
+      .about h2,
+      .letters h2,
+      .cta h2,
+      .promise h2 {
+        font-size: 2rem;
+      }
+
+      .promise {
+        padding: 4rem 2rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Floating Hearts -->
+  <div class="floating-hearts" id="floatingHearts"></div>
+
+  <!-- Navigation -->
+  <nav>
+    <div class="nav-container">
+      <div class="nav-logo">💕 Promise Day</div>
+      <ul class="nav-links">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#promises">Promises</a></li>
+        <li><a href="#letters">Letters</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero" id="home">
+    <div class="hero-content">
+      <div class="hero-text">
+        <h1>A Promise <span>From My Heart</span></h1>
+        <p>Today I promise you forever. Not just today, not just tomorrow, but every single day for the rest of our
+          lives.</p>
+        <div class="hero-buttons">
+          <button class="btn btn-primary" onclick="scrollToSection('about')">Learn More</button>
+          <button class="btn btn-secondary" onclick="scrollToSection('letters')">Read My Letters</button>
+        </div>
+      </div>
+      <div class="hero-image">
+        <img
+          src="{{ url_for('static', filename='assets/promise-1.jpeg') }}"
+          alt="Promise Day">
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section class="about" id="about">
+    <h2>What Promise Day Means</h2>
+    <p class="about-subtitle">A day to celebrate our love and commitment</p>
+    <div class="about-grid">
+      <div class="about-card">
+        <div class="about-icon">🤝</div>
+        <h3>Trust</h3>
+        <p>I promise to always be honest with you and trust you with everything in my heart.</p>
+      </div>
+      <div class="about-card">
+        <div class="about-icon">❤️</div>
+        <h3>Love</h3>
+        <p>I promise to love you unconditionally, through every moment, happy or difficult.</p>
+      </div>
+      <div class="about-card">
+        <div class="about-icon">🎯</div>
+        <h3>Support</h3>
+        <p>I promise to be your biggest supporter and stand by you in all your dreams.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Promise Section -->
+  <section class="promise" id="promises">
+    <div class="promise-container">
+      <h2>My Promises to You</h2>
+      <p class="promise-text">
+        These are the promises I make to you today and for every day that comes after.
+      </p>
+      <div class="promise-grid">
+        <div class="promise-item">
+          <h3>💫</h3>
+          <h3>Always Be There</h3>
+        </div>
+        <div class="promise-item">
+          <h3>😊</h3>
+          <h3>Make You Happy</h3>
+        </div>
+        <div class="promise-item">
+          <h3>🌹</h3>
+          <h3>Cherish You Forever</h3>
+        </div>
+        <div class="promise-item">
+          <h3>✨</h3>
+          <h3>Build Dreams Together</h3>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quote Section -->
+  <section class="quote">
+    <div class="quote-container">
+      <p>In you, I've found not just a love, but a promise of a beautiful forever together.</p>
+      <div class="quote-author">- Said with all my love</div>
+    </div>
+  </section>
+
+  <!-- Letters Section -->
+  <section class="letters" id="letters">
+    <h2>Love Letters From My Heart</h2>
+
+    <div class="letter-box" onclick="toggleLetter(this)">
+      <div class="letter-header">
+        <div class="letter-title">💌 Why I Love You</div>
+        <div class="letter-icon">➕</div>
+      </div>
+      <div class="letter-content">
+        <p>Every time I see your smile, my heart skips a beat. You make the world feel brighter just by being in it. The
+          way you laugh, the way you care, the way you make me feel - it's everything I've ever wanted. Thank you for
+          being you. Thank you for choosing me. I promise to love you more and more with each passing day.</p>
+      </div>
+    </div>
+
+    <div class="letter-box" onclick="toggleLetter(this)">
+      <div class="letter-header">
+        <div class="letter-title">🌟 My Promise to You</div>
+        <div class="letter-icon">➕</div>
+      </div>
+      <div class="letter-content">
+        <p>I promise to wake up every morning grateful for you. I promise to listen to your dreams and help you chase
+          them. I promise to hold your hand through the tough times and celebrate with you in the good ones. I promise
+          to be your safe place, your home, your everything. You deserve nothing but the best, and I'll spend every day
+          proving that you have me.</p>
+      </div>
+    </div>
+
+    <div class="letter-box" onclick="toggleLetter(this)">
+      <div class="letter-header">
+        <div class="letter-title">🎁 Our Beautiful Future</div>
+        <div class="letter-icon">➕</div>
+      </div>
+      <div class="letter-content">
+        <p>I can't wait to build a beautiful future with you. A future filled with laughter, adventures, and endless
+          love. A future where we grow old together, creating memories that will last a lifetime. Every day with you is
+          a gift, and I promise to never take that for granted. Together, we can conquer anything. Together, we are
+          unstoppable. You are my greatest blessing.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta">
+    <h2>Forever Starts Today</h2>
+    <p>Thank you for being my greatest blessing. Here's to a lifetime of love, laughter, and beautiful promises.</p>
+    <button class="btn btn-primary" onclick="celebrateWithConfetti()">Celebrate Our Love</button>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>With all my love, forever yours</p>
+    <div class="footer-hearts">💕 💕 💕</div>
+    <p>Promise Day 2026</p>
+  </footer>
+
+  <script>
+    // Floating Hearts Animation
+    function createFloatingHearts() {
+      const container = document.getElementById('floatingHearts');
+      setInterval(() => {
+        const heart = document.createElement('div');
+        heart.classList.add('heart');
+        heart.textContent = '❤️';
+        heart.style.left = Math.random() * 100 + '%';
+        heart.style.animationDuration = (Math.random() * 5 + 10) + 's';
+        container.appendChild(heart);
+        setTimeout(() => heart.remove(), 15000);
+      }, 300);
+    }
+
+    // Smooth Scroll Function
+    function scrollToSection(sectionId) {
+      const section = document.getElementById(sectionId);
+      if (section) {
+        section.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    // Toggle Letter Content
+    function toggleLetter(element) {
+      const content = element.querySelector('.letter-content');
+      const icon = element.querySelector('.letter-icon');
+
+      content.classList.toggle('active');
+      icon.textContent = content.classList.contains('active') ? '✕' : '➕';
+    }
+
+    // Confetti Celebration
+    function celebrateWithConfetti() {
+      const confettiPieces = 50;
+      for (let i = 0; i < confettiPieces; i++) {
+        const confetti = document.createElement('div');
+        confetti.style.position = 'fixed';
+        confetti.style.width = '10px';
+        confetti.style.height = '10px';
+        confetti.style.background = ['#ff4458', '#ff9bb5', '#ffd4d4'][Math.floor(Math.random() * 3)];
+        confetti.style.left = Math.random() * 100 + '%';
+        confetti.style.top = '-10px';
+        confetti.style.borderRadius = '50%';
+        confetti.style.pointerEvents = 'none';
+        confetti.style.zIndex = '9999';
+        document.body.appendChild(confetti);
+
+        let x = Math.random() * 200 - 100;
+        let y = 0;
+        let velocity = Math.random() * 5 + 5;
+
+        const animate = () => {
+          y += velocity;
+          x += (Math.random() - 0.5) * 2;
+          confetti.style.transform = `translate(${x}px, ${y}px)`;
+          confetti.style.opacity = 1 - (y / window.innerHeight);
+
+          if (y < window.innerHeight) {
+            requestAnimationFrame(animate);
+          } else {
+            confetti.remove();
+          }
+        };
+        animate();
+      }
+
+      alert('Happy Promise Day! I love you so much! 💕');
+    }
+
+    // Initialize
+    createFloatingHearts();
+  </script>
+</body>
+
+</html>
